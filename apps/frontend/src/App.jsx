@@ -1,60 +1,103 @@
 import { useState, useEffect, useRef } from "react";
 import CharacterImage from "./components/characters/CharacterImages";
-import waldoImage from "./assets/Waldo.jpeg";
-import skySlopeMap from "./assets/Sky_Slope_Map.png";
+// import waldoImage from "./assets/Waldo.jpeg";
+import skySlopeMap from "./../public/Sky_Slope_Map.png";
+import fetchApi from "./api/api";
 
 function App() {
     const [currentCharacter, setCurrentCharacter] = useState({});
+    const [currentMap, setCurrentMap] = useState({});
     const currentMapRef = useRef();
-
+    let firstLoad = true;
     const [characters, setCharacters] = useState([
-        {
-            isActive: true,
-            color: "red",
-            isMarkerPlaced: false,
-            xCoordinate: 0,
-            yCoordinate: 0,
-            name: "Waldo",
-            imgSrc: waldoImage,
-            guessed: false,
-            startXCoordinate: 0.834850193298969,
-            startYCoordinate: 0.8961823453608248,
-            endXCoordinate: 0.8771182345360825,
-            endYCoordinate: 0.9972132731958763,
-        },
-        {
-            isActive: false,
-            color: "purple",
-            isMarkerPlaced: false,
-            xCoordinate: 0,
-            yCoordinate: 0,
-            name: "Wilma",
-            imgSrc: waldoImage,
-            guessed: false,
-            startXCoordinate: 0.4709326675257732,
-            startYCoordinate: 0.5044297680412371,
-            endXCoordinate: 0.5028914304123712,
-            endYCoordinate: 0.6075225515463918,
-        },
-        {
-            isActive: false,
-            color: "yellow",
-            isMarkerPlaced: false,
-            xCoordinate: 0,
-            yCoordinate: 0,
-            name: "WhiteBeard",
-            imgSrc: waldoImage,
-            guessed: false,
-            startXCoordinate: 0.04928318298969072,
-            startYCoordinate: 0.9271101804123711,
-            endXCoordinate: 0.08845844072164949,
-            endYCoordinate: 0.9972132731958763,
-        },
+        // {
+        //     isActive: true, //
+        //     color: "red",
+        //     isMarkerPlaced: false, //
+        //     xCoordinate: 0, //
+        //     yCoordinate: 0, //
+        //     name: "Waldo",
+        //     imgSrc: waldoImage,
+        //     guessed: false,
+        //     startXCoordinate: 0.83485019,
+        //     startYCoordinate: 0.89618234,
+        //     endXCoordinate: 0.87711823,
+        //     endYCoordinate: 0.99721327,
+        // },
+        // {
+        //     isActive: false,
+        //     color: "purple",
+        //     isMarkerPlaced: false,
+        //     xCoordinate: 0,
+        //     yCoordinate: 0,
+        //     name: "Wilma",
+        //     imgSrc: waldoImage,
+        //     guessed: false,
+        //     startXCoordinate: 0.47093266,
+        //     startYCoordinate: 0.50442976,
+        //     endXCoordinate: 0.50289143,
+        //     endYCoordinate: 0.60752255,
+        // },
+        // {
+        //     isActive: false,
+        //     color: "yellow",
+        //     isMarkerPlaced: false,
+        //     xCoordinate: 0,
+        //     yCoordinate: 0,
+        //     name: "WhiteBeard",
+        //     imgSrc: waldoImage,
+        //     guessed: false,
+        //     startXCoordinate: 0.04928318,
+        //     startYCoordinate: 0.92711018,
+        //     endXCoordinate: 0.08845844,
+        //     endYCoordinate: 0.99721327,
+        // },
     ]);
+
+    useEffect(() => {
+        async function getInitialCharacters() {
+            if (firstLoad) {
+                try {
+                    const response = await fetchApi(
+                        `/api/characters/initial`,
+                        "GET",
+                    );
+
+                    setCharacters(response.characters)
+
+                    return;
+                } catch (err) {
+                    throw err;
+                }
+            }
+        }
+        getInitialCharacters();
+    }, []);
+
+    useEffect(() => {
+        console.log(characters)
+    }, [])
+
+    async function changeMap(title) {
+        try {
+            const response = await fetchApi(
+                `/api/maps/${title}/characters`,
+                "GET",
+            );
+
+            const data = response.json();
+
+            setCurrentMap(data);
+            firstLoad = false;
+            return;
+        } catch (err) {
+            throw err;
+        }
+    }
 
     function checkGuess() {
         setCharacters((prev) =>
-            prev.map((char) => {
+            prev?.map((char) => {
                 if (
                     char.endXCoordinate > char.xCoordinate &&
                     char.xCoordinate > char.startXCoordinate &&
@@ -88,6 +131,7 @@ function App() {
             width: 10px; border-radius: 100vw;
             position:absolute; background: ${currentCharacter?.color};
             left: ${e.clientX - 5}px; top: ${e.clientY - 5}px;`;
+        console.log(currentCharacter?.color);
         document.body.appendChild(circle);
     }
 
@@ -109,26 +153,24 @@ function App() {
 
     function handleClick(name, e) {
         setCharacters((prev) =>
-            prev.map((char) =>
+            prev?.map((char) =>
                 char.name === name
                     ? {
                           ...char,
                           isMarkerPlaced: !char.isMarkerPlaced,
-                          xCoordinate: (e.clientX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.width,
-                          yCoordinate: (e.clientY - e.currentTarget.getBoundingClientRect().top) / e.currentTarget.height,
+                          xCoordinate:
+                              (e.clientX -
+                                  e.currentTarget.getBoundingClientRect()
+                                      .left) /
+                              e.currentTarget.width,
+                          yCoordinate:
+                              (e.clientY -
+                                  e.currentTarget.getBoundingClientRect().top) /
+                              e.currentTarget.height,
                       }
                     : char,
             ),
         );
-        // console.log(`window.innerWidth = ${window.innerWidth}; window.innerHeight = ${window.innerHeight}; e.clientX = ${e.clientX};  e.clientY = ${e.clientY}`)
-        // console.log(`x / iW = ${e.clientX / window.innerWidth}; y / iH = ${e.clientY / window.innerHeight}`)
-
-        //  - ((window.innerWidth - currentMapRef?.current?.offsetWidth) / 2)) / currentMapRef?.current?.width )
-        console.log(e.clientX)
-        console.log(e.currentTarget.getBoundingClientRect().left);
-        console.log((e.clientX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.width);
-        console.log((e.clientY - e.currentTarget.getBoundingClientRect().top) / e.currentTarget.height);
-        console.log(characters)
     }
 
     useEffect(() => {
@@ -158,9 +200,10 @@ function App() {
                 <div className="flex flex-col gap-4 p-4 pr-0 my-auto">
                     <CharacterImage
                         character={characters[0]}
+                        
                         onClick={() => {
                             setCharacters((prev) =>
-                                prev.map((char) =>
+                                prev?.map((char) =>
                                     char.name === "Waldo"
                                         ? {
                                               ...char,
@@ -178,7 +221,7 @@ function App() {
                         character={characters[1]}
                         onClick={() => {
                             setCharacters((prev) =>
-                                prev.map((char) =>
+                                prev?.map((char) =>
                                     char.name === "Wilma"
                                         ? {
                                               ...char,
@@ -196,8 +239,8 @@ function App() {
                         character={characters[2]}
                         onClick={() => {
                             setCharacters((prev) =>
-                                prev.map((char) =>
-                                    char.name === "WhiteBeard"
+                                prev?.map((char) =>
+                                    char.name === "White Beard"
                                         ? {
                                               ...char,
                                               isActive: true,
@@ -212,11 +255,22 @@ function App() {
                     />
                 </div>
                 <div className="flex flex-col justify-center items-center relative gap-5">
+                    <select name="mapSelection" id="mapSelection">
+                        <option value="snowMap" defaultChecked>
+                            Snow Map
+                        </option>
+                        <option value="otherOption" defaultChecked>
+                            Other Option
+                        </option>
+                        <option value="otherOption" defaultChecked>
+                            Other Option
+                        </option>
+                    </select>
+
                     <img
                         ref={currentMapRef}
-                        id="currentMap"
                         src={skySlopeMap}
-                        alt="Sknow map"
+                        alt={currentMap?.title ?? "Map Image"}
                     />
 
                     <button

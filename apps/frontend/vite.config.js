@@ -7,7 +7,7 @@ export default defineConfig({
     plugins: [react(), tailwindcss()],
     server: {
         proxy: {
-            "/api": "https://blog-api-sxu4.onrender.com",
+            "/api": "https://localhost:3000",
         },
     },
 });
