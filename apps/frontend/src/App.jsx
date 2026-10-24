@@ -9,50 +9,7 @@ function App() {
     const [currentMap, setCurrentMap] = useState({});
     const currentMapRef = useRef();
     let firstLoad = true;
-    const [characters, setCharacters] = useState([
-        // {
-        //     isActive: true, //
-        //     color: "red",
-        //     isMarkerPlaced: false, //
-        //     xCoordinate: 0, //
-        //     yCoordinate: 0, //
-        //     name: "Waldo",
-        //     imgSrc: waldoImage,
-        //     guessed: false,
-        //     startXCoordinate: 0.83485019,
-        //     startYCoordinate: 0.89618234,
-        //     endXCoordinate: 0.87711823,
-        //     endYCoordinate: 0.99721327,
-        // },
-        // {
-        //     isActive: false,
-        //     color: "purple",
-        //     isMarkerPlaced: false,
-        //     xCoordinate: 0,
-        //     yCoordinate: 0,
-        //     name: "Wilma",
-        //     imgSrc: waldoImage,
-        //     guessed: false,
-        //     startXCoordinate: 0.47093266,
-        //     startYCoordinate: 0.50442976,
-        //     endXCoordinate: 0.50289143,
-        //     endYCoordinate: 0.60752255,
-        // },
-        // {
-        //     isActive: false,
-        //     color: "yellow",
-        //     isMarkerPlaced: false,
-        //     xCoordinate: 0,
-        //     yCoordinate: 0,
-        //     name: "WhiteBeard",
-        //     imgSrc: waldoImage,
-        //     guessed: false,
-        //     startXCoordinate: 0.04928318,
-        //     startYCoordinate: 0.92711018,
-        //     endXCoordinate: 0.08845844,
-        //     endYCoordinate: 0.99721327,
-        // },
-    ]);
+    const [characters, setCharacters] = useState([]);
 
     useEffect(() => {
         async function getInitialCharacters() {
@@ -63,7 +20,9 @@ function App() {
                         "GET",
                     );
 
-                    setCharacters(response.characters)
+                    response.characters[0].isActive = true;
+
+                    setCharacters(response.characters);
 
                     return;
                 } catch (err) {
@@ -73,10 +32,6 @@ function App() {
         }
         getInitialCharacters();
     }, []);
-
-    useEffect(() => {
-        console.log(characters)
-    }, [])
 
     async function changeMap(title) {
         try {
@@ -118,11 +73,16 @@ function App() {
     }
 
     function addFollowingDot(e) {
-        const previousElement = document.querySelector(
+        const previousCircle = document.querySelector(
             `#selectorDot${currentCharacter?.color}`,
         );
-        if (previousElement) {
-            previousElement.parentNode.removeChild(previousElement);
+        const previousArrow = document.querySelector(
+            `#selectorArrow${currentCharacter?.color}`,
+        );
+
+        if (previousCircle) {
+            previousCircle.parentNode.removeChild(previousCircle);
+            previousArrow.parentNode.removeChild(previousArrow);
         }
         const circle = document.createElement("div");
         circle.id = `selectorDot${currentCharacter?.color}`;
@@ -130,9 +90,24 @@ function App() {
             pointer-events: none; height: 10px;
             width: 10px; border-radius: 100vw;
             position:absolute; background: ${currentCharacter?.color};
-            left: ${e.clientX - 5}px; top: ${e.clientY - 5}px;`;
-        console.log(currentCharacter?.color);
+            left: ${e.pageX - 5}px; top: ${e.pageY - 5}px;
+            `;
+
+        const arrow = document.createElement('p');
+        arrow.id = `selectorArrow${currentCharacter?.color}`;
+        arrow.textContent = '↓';
+        arrow.style = `color: ${currentCharacter?.color};
+        pointer-events: none;
+        font-size: 1.5rem;
+        position:absolute;
+        left: ${e.pageX - 10}px; top: ${e.pageY - 40}px;
+        text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000,
+             1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
+        
+        `;
+
         document.body.appendChild(circle);
+        document.body.appendChild(arrow);
     }
 
     useEffect(() => {
@@ -180,6 +155,17 @@ function App() {
             }
         });
         setCurrentCharacter(activeCharacter);
+
+
+        const undefinedCircle = document.querySelector(
+            `#selectorDotundefined`,
+        );
+        const undefinedArrow = document.querySelector(
+            `#selectorArrowundefined`,
+        );
+        undefinedCircle?.parentNode.removeChild(undefinedCircle);
+        undefinedArrow?.parentNode.removeChild(undefinedArrow);
+
     }, [characters]);
 
     useEffect(() => {
@@ -198,61 +184,21 @@ function App() {
         <>
             <main className="grid grid-cols-[1fr_3fr_1fr] gap-4 min-h-screen justify-center items-center">
                 <div className="flex flex-col gap-4 p-4 pr-0 my-auto">
-                    <CharacterImage
-                        character={characters[0]}
-                        
-                        onClick={() => {
-                            setCharacters((prev) =>
-                                prev?.map((char) =>
-                                    char.name === "Waldo"
-                                        ? {
-                                              ...char,
-                                              isActive: true,
-                                          }
-                                        : {
-                                              ...char,
-                                              isActive: false,
-                                          },
-                                ),
-                            );
-                        }}
-                    />
-                    <CharacterImage
-                        character={characters[1]}
-                        onClick={() => {
-                            setCharacters((prev) =>
-                                prev?.map((char) =>
-                                    char.name === "Wilma"
-                                        ? {
-                                              ...char,
-                                              isActive: true,
-                                          }
-                                        : {
-                                              ...char,
-                                              isActive: false,
-                                          },
-                                ),
-                            );
-                        }}
-                    />
-                    <CharacterImage
-                        character={characters[2]}
-                        onClick={() => {
-                            setCharacters((prev) =>
-                                prev?.map((char) =>
-                                    char.name === "White Beard"
-                                        ? {
-                                              ...char,
-                                              isActive: true,
-                                          }
-                                        : {
-                                              ...char,
-                                              isActive: false,
-                                          },
-                                ),
-                            );
-                        }}
-                    />
+                    {characters.map((char) => (
+                        <CharacterImage
+                            key={char.id}
+                            character={char}
+                            onClick={() => {
+                                setCharacters((prev) =>
+                                    prev?.map((prevChar) =>
+                                        prevChar.name === char.name
+                                            ? { ...prevChar, isActive: true }
+                                            : { ...prevChar, isActive: false },
+                                    ),
+                                );
+                            }}
+                        />
+                    ))}
                 </div>
                 <div className="flex flex-col justify-center items-center relative gap-5">
                     <select name="mapSelection" id="mapSelection">
