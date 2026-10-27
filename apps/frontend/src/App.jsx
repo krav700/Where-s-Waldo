@@ -1,75 +1,106 @@
 import { useState, useEffect, useRef } from "react";
 import CharacterImage from "./components/characters/CharacterImages";
-// import waldoImage from "./assets/Waldo.jpeg";
-import skySlopeMap from "./../public/Sky_Slope_Map.png";
+import skySlopeMap from "./assets/Sky_Slope_Map.png";
 import fetchApi from "./api/api";
+import confetti from "canvas-confetti";
+import ScoreForm from "./components/forms/ScoreForm";
 
 function App() {
-    const [currentCharacter, setCurrentCharacter] = useState({});
-    const [currentMap, setCurrentMap] = useState({});
-    const currentMapRef = useRef();
-    let firstLoad = true;
     const [characters, setCharacters] = useState([]);
+    const [currentCharacter, setCurrentCharacter] = useState({});
+    const [maps, setMaps] = useState([]);
+    const [currentMap, setCurrentMap] = useState({});
+    const [scores, setScores] = useState([]);
+    const [showScoreForm, setShowScoreForm] = useState(false);
+    const mainRef = useRef();
+    const currentMapRef = useRef();
+
+    var end = Date.now() + 3 * 1000;
+
+    var colors = ["#bb0000", "#ffffff"];
+
+    function frame() {
+        confetti({
+            particleCount: 2,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: colors,
+        });
+        confetti({
+            particleCount: 2,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: colors,
+        });
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }
 
     useEffect(() => {
-        async function getInitialCharacters() {
-            if (firstLoad) {
-                try {
-                    const response = await fetchApi(
-                        `/api/characters/initial`,
-                        "GET",
-                    );
-
-                    response.characters[0].isActive = true;
-
-                    setCharacters(response.characters);
-
-                    return;
-                } catch (err) {
-                    throw err;
-                }
+        async function getMaps() {
+            try {
+                const response = await fetchApi(`/api/maps`, "GET");
+                setMaps(response.maps);
+                return;
+            } catch (err) {
+                throw err;
             }
         }
-        getInitialCharacters();
+        getMaps();
+
+        async function getInitialProps() {
+            try {
+                const response = await fetchApi(`/api/initial`, "GET");
+                response.characters[0].isActive = true;
+                setCharacters(response?.characters);
+                setCurrentMap(response?.map);
+                setScores(response?.scores);
+
+                return;
+            } catch (err) {
+                throw err;
+            }
+        }
+        if (window.location.pathname === "/") {
+            getInitialProps();
+        }
     }, []);
 
-    async function changeMap(title) {
+    async function changeMap(mapId) {
         try {
             const response = await fetchApi(
-                `/api/maps/${title}/characters`,
+                `/api/maps/${mapId}/characters`,
                 "GET",
             );
-
-            const data = response.json();
-
-            setCurrentMap(data);
-            firstLoad = false;
+            setCurrentMap(response?.map);
             return;
         } catch (err) {
             throw err;
         }
     }
 
-    function checkGuess() {
-        setCharacters((prev) =>
-            prev?.map((char) => {
-                if (
-                    char.endXCoordinate > char.xCoordinate &&
-                    char.xCoordinate > char.startXCoordinate &&
-                    char.endYCoordinate > char.yCoordinate &&
-                    char.yCoordinate > char.startYCoordinate
-                ) {
-                    return {
-                        ...char,
-                        guessed: true,
-                    };
-                }
-                return {
-                    ...char,
-                    guessed: false,
-                };
-            }),
-        );
+    async function checkGuess() {
+        try {
+            const response = await fetchApi(
+                `/api/maps/${currentMap.id}/getCheckedCharacters`,
+                "POST",
+                { characters },
+            );
+            setCharacters(response.characters);
+
+            if (response.win) {
+                frame();
+                setShowScoreForm(true);
+            }
+
+            return;
+        } catch (err) {
+            throw err;
+        }
     }
 
     function addFollowingDot(e) {
@@ -93,9 +124,9 @@ function App() {
             left: ${e.pageX - 5}px; top: ${e.pageY - 5}px;
             `;
 
-        const arrow = document.createElement('p');
+        const arrow = document.createElement("p");
         arrow.id = `selectorArrow${currentCharacter?.color}`;
-        arrow.textContent = '↓';
+        arrow.textContent = "↓";
         arrow.style = `color: ${currentCharacter?.color};
         pointer-events: none;
         font-size: 1.5rem;
@@ -106,8 +137,8 @@ function App() {
         
         `;
 
-        document.body.appendChild(circle);
-        document.body.appendChild(arrow);
+        mainRef.current.appendChild(circle);
+        mainRef.current.appendChild(arrow);
     }
 
     useEffect(() => {
@@ -126,7 +157,7 @@ function App() {
         };
     }, [currentCharacter]);
 
-    function handleClick(name, e) {
+    function handleMarkerPlacing(name, e) {
         setCharacters((prev) =>
             prev?.map((char) =>
                 char.name === name
@@ -149,28 +180,24 @@ function App() {
     }
 
     useEffect(() => {
-        const activeCharacter = characters.find((char) => {
+        const activeCharacter = characters?.find((char) => {
             if (char.isActive) {
                 return char;
             }
         });
         setCurrentCharacter(activeCharacter);
 
-
-        const undefinedCircle = document.querySelector(
-            `#selectorDotundefined`,
-        );
+        const undefinedCircle = document.querySelector(`#selectorDotundefined`);
         const undefinedArrow = document.querySelector(
             `#selectorArrowundefined`,
         );
         undefinedCircle?.parentNode.removeChild(undefinedCircle);
         undefinedArrow?.parentNode.removeChild(undefinedArrow);
-
     }, [characters]);
 
     useEffect(() => {
         function sendCharName(e) {
-            handleClick(currentCharacter?.name, e);
+            handleMarkerPlacing(currentCharacter?.name, e);
         }
 
         currentMapRef?.current?.addEventListener("click", sendCharName);
@@ -180,11 +207,17 @@ function App() {
         };
     }, [currentCharacter]);
 
+    useEffect(() => {
+        console.log("No problem here")
+        console.log(showScoreForm);
+        console.log("yep")
+    }, [showScoreForm])
+
     return (
         <>
-            <main className="grid grid-cols-[1fr_3fr_1fr] gap-4 min-h-screen justify-center items-center">
+            <main className="grid grid-cols-[1fr_3fr_1fr] gap-4 min-h-screen justify-center items-center" ref={mainRef}>
                 <div className="flex flex-col gap-4 p-4 pr-0 my-auto">
-                    {characters.map((char) => (
+                    {characters?.map((char) => (
                         <CharacterImage
                             key={char.id}
                             character={char}
@@ -202,33 +235,46 @@ function App() {
                 </div>
                 <div className="flex flex-col justify-center items-center relative gap-5">
                     <select name="mapSelection" id="mapSelection">
-                        <option value="snowMap" defaultChecked>
-                            Snow Map
-                        </option>
-                        <option value="otherOption" defaultChecked>
-                            Other Option
-                        </option>
-                        <option value="otherOption" defaultChecked>
-                            Other Option
-                        </option>
+                        {maps?.map((map) => (
+                            <option
+                                value={map.title}
+                                defaultChecked={maps[0] === map}
+                                key={map.id}
+                            >
+                                {map.title}
+                            </option>
+                        ))}
                     </select>
 
                     <img
                         ref={currentMapRef}
-                        src={skySlopeMap}
+                        src={currentMap?.imgSrc ?? skySlopeMap}
                         alt={currentMap?.title ?? "Map Image"}
                     />
 
                     <button
                         onClick={checkGuess}
-                        className="px-2 py-1 text-black font-bold bg-[repeating-linear-gradient(45deg,var(--color-red-400),var(--color-red-400)_10px,white_10px,white_20px)]"
+                        className="px-2 py-1 text-black font-bold bg-[repeating-linear-gradient(45deg,var(--color-red-400),var(--color-red-400)_10px,white_10px,white_20px)]
+                                   disabled:bg-[repeating-linear-gradient(45deg,var(--color-gray-400),var(--color-gray-400)_10px,white_10px,white_20px)]
+                                   disabled:cursor-not-allowed"
+                        disabled={showScoreForm}
                     >
                         Submit Guess
                     </button>
                 </div>
                 <div className="flex flex-col max-h-137.5 h-full mr-4 bg-amber-300">
                     <h2 className="text-black">Scoreboard:</h2>
+                    {console.log(scores)}
+                    <div className="flex flex-col gap-2">
+                        {scores?.map((score) => (
+                            <div className="grid grid-cols-2 border px-2 py-1" key={score.id}>
+                                <h3>{score.score}</h3>
+                                <h3>{score.username}</h3>
+                            </div>
+                        ))}
+                    </div>
                 </div>
+                {showScoreForm && <ScoreForm currentMap={currentMap} setShowScoreForm={setShowScoreForm} />}
             </main>
         </>
     );
