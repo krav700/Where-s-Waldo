@@ -4,9 +4,9 @@ async function fetchApi(path, methodType, bodyParams) {
     try {
         const response = await fetch(`${API_URL}${path}`, {
             method: methodType,
+            credentials: 'include',
             headers: {
                 "Content-Type": "application/json",
-                "authorization": localStorage.getItem("token")
             },
             ...(bodyParams && { body: JSON.stringify(bodyParams) }),
         });
