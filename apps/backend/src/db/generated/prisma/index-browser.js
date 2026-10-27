@@ -120,12 +120,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.UserScalarFieldEnum = {
-  id: 'id',
-  username: 'username',
-  score: 'score'
-};
-
 exports.Prisma.CharacterScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -148,8 +142,15 @@ exports.Prisma.MapScalarFieldEnum = {
 exports.Prisma.ScoreScalarFieldEnum = {
   id: 'id',
   score: 'score',
-  userId: 'userId',
+  username: 'username',
   mapId: 'mapId'
+};
+
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  sid: 'sid',
+  data: 'data',
+  expiresAt: 'expiresAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -164,10 +165,10 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  User: 'User',
   Character: 'Character',
   Map: 'Map',
-  Score: 'Score'
+  Score: 'Score',
+  Session: 'Session'
 };
 
 /**
