@@ -3,7 +3,6 @@ export default function addFollowingDot(e, parent, currentCharacter) {
     if (currentCharacter?.color == undefined) {
         return;
     }
-    console.log(!!currentCharacter)
 
     const previousCircle = document.querySelector(
         `#selectorDot${currentCharacter?.color}`,

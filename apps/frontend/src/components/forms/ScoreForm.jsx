@@ -23,6 +23,7 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
 
             if (response.errors) {
                 setErrors(response.errors);
+                submitButton.current.disabled = false;
                 return;
             }
 
@@ -65,7 +66,7 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
     return (
         <div className="absolute top-[50%] left-[50%] translate-[-50%] z-50 p-5 flex flex-col gap-2 justify-center items-center h-fit w-fit border-3 border-red-500 bg-white rounded-2xl">
             {errors ? (
-                <div className="flex flex-col justify-center items-center p-5">
+                <div className="flex flex-col justify-center items-center p-1">
                     {errors.map((error) => (
                         <div key={error.msg}>
                             <h3 className="text-sm text-red-500">
@@ -92,7 +93,7 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
                                     type="text"
                                     id="username"
                                     name="username"
-                                    className="bg-white border border-black"
+                                    className="bg-white border border-black text-black"
                                     onChange={(e) => {
                                         setUsername(e.target.value);
                                     }}

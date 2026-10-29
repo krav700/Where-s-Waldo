@@ -63,7 +63,6 @@ function App() {
                 setCharacters(response?.characters);
                 setCurrentMap(response?.map);
                 setScores(response?.scores);
-                console.log(response?.scores)
 
                 return;
             } catch (err) {
