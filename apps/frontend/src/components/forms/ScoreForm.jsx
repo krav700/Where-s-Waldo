@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import fetchApi from "../../api/api.js";
+import getClockTime from "../../utilities/getClockTime.js";
 
-function ScoreForm({ currentMap, setShowScoreForm }) {
+function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
     const [username, setUsername] = useState("");
     const [errors, setErrors] = useState("");
     const [score, setScore] = useState("");
@@ -20,7 +21,20 @@ function ScoreForm({ currentMap, setShowScoreForm }) {
                 return;
             }
 
+            if (response.errors) {
+                setErrors(response.errors);
+                return;
+            }
+
+            const scoreResponse = await fetchApi(`/api/maps/${currentMap.id}/scores`, "GET");
+
+            if (!scoreResponse) {
+                console.log("No response recieved: ", response);
+                return;
+            }
+
             setShowScoreForm(false);
+            setScores(scoreResponse.scores);
         } catch (err) {
             console.log(err);
             return err;
@@ -48,16 +62,8 @@ function ScoreForm({ currentMap, setShowScoreForm }) {
         getScore();
     }, []);
 
-    function getClockTime(seconds) {
-        let hours = Math.floor(seconds / 3600);
-        let minutes = Math.floor((seconds %  3600) / 60);
-        let remainingSeconds = seconds % 60;
-
-        return `${hours < 10 ? `0${hours}` : hours }:${minutes < 10 ? `0${minutes}` : minutes }:${remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds }`;
-    }
-
     return (
-        <div className="absolute top-[50%] left-[50%] translate-[-50%] z-50 p-5 flex flex-col gap-2 justify-center items-center h-fit w-fit bg-red-400">
+        <div className="absolute top-[50%] left-[50%] translate-[-50%] z-50 p-5 flex flex-col gap-2 justify-center items-center h-fit w-fit border-3 border-red-500 bg-white rounded-2xl">
             {errors ? (
                 <div className="flex flex-col justify-center items-center p-5">
                     {errors.map((error) => (
@@ -73,25 +79,30 @@ function ScoreForm({ currentMap, setShowScoreForm }) {
                     onSubmit={handleSubmit}
                     className="flex flex-col justify-center items-center"
                 >
-                    <fieldset className="flex flex-col gap-2 justify-center items-center w-fit">
-                        <legend>You won!</legend>
-                        <div className="grid grid-cols-[1fr_2fr] gap-y-3">
-                            <label htmlFor="username">Username:</label>
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                onChange={(e) => {
-                                    setUsername(e.target.value);
-                                }}
-                            />
-
+                    <fieldset className="flex flex-col gap-2 justify-center items-center w-fit border-red-500 rounded-xl">
+                        <legend className="font-bold text-2xl">You won!</legend>
+                        <div className="flex flex-col gap-4 p-2">
                             <div>
                                 <h3>Your completed this map in:</h3>
                                 <h2>{getClockTime(score)}</h2>
                             </div>
+                            <div className="flex flex-col gap-1 py-2">
+                                <label htmlFor="username" className="text-xl font-semibold">Username:</label>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    className="bg-white border border-black"
+                                    onChange={(e) => {
+                                        setUsername(e.target.value);
+                                    }}
+                                />
+                            </div>
                         </div>
-                        <button className="w-full p-1 rounded-lg bg-blue-900 text-white" ref={submitButton}>
+                        <button className="w-full p-1 rounded-lg bg-blue-900 text-xl
+                        bg-[repeating-linear-gradient(45deg,var(--color-red-400),var(--color-red-400)_10px,white_10px,white_20px)]
+                                   disabled:bg-[repeating-linear-gradient(45deg,var(--color-gray-400),var(--color-gray-400)_10px,white_10px,white_20px)]
+                                   disabled:cursor-not-allowed text-black font-semibold border border-red-500" ref={submitButton}>
                             Submit
                         </button>
                     </fieldset>
