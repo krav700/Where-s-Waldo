@@ -3432,20 +3432,30 @@ export namespace Prisma {
 
   export type AggregateScore = {
     _count: ScoreCountAggregateOutputType | null
+    _avg: ScoreAvgAggregateOutputType | null
+    _sum: ScoreSumAggregateOutputType | null
     _min: ScoreMinAggregateOutputType | null
     _max: ScoreMaxAggregateOutputType | null
   }
 
+  export type ScoreAvgAggregateOutputType = {
+    score: number | null
+  }
+
+  export type ScoreSumAggregateOutputType = {
+    score: number | null
+  }
+
   export type ScoreMinAggregateOutputType = {
     id: string | null
-    score: string | null
+    score: number | null
     username: string | null
     mapId: string | null
   }
 
   export type ScoreMaxAggregateOutputType = {
     id: string | null
-    score: string | null
+    score: number | null
     username: string | null
     mapId: string | null
   }
@@ -3458,6 +3468,14 @@ export namespace Prisma {
     _all: number
   }
 
+
+  export type ScoreAvgAggregateInputType = {
+    score?: true
+  }
+
+  export type ScoreSumAggregateInputType = {
+    score?: true
+  }
 
   export type ScoreMinAggregateInputType = {
     id?: true
@@ -3519,6 +3537,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ScoreAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ScoreSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ScoreMinAggregateInputType
@@ -3549,16 +3579,20 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ScoreCountAggregateInputType | true
+    _avg?: ScoreAvgAggregateInputType
+    _sum?: ScoreSumAggregateInputType
     _min?: ScoreMinAggregateInputType
     _max?: ScoreMaxAggregateInputType
   }
 
   export type ScoreGroupByOutputType = {
     id: string
-    score: string
+    score: number
     username: string
     mapId: string
     _count: ScoreCountAggregateOutputType | null
+    _avg: ScoreAvgAggregateOutputType | null
+    _sum: ScoreSumAggregateOutputType | null
     _min: ScoreMinAggregateOutputType | null
     _max: ScoreMaxAggregateOutputType | null
   }
@@ -3626,7 +3660,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      score: string
+      score: number
       username: string
       mapId: string
     }, ExtArgs["result"]["score"]>
@@ -4054,7 +4088,7 @@ export namespace Prisma {
    */
   interface ScoreFieldRefs {
     readonly id: FieldRef<"Score", 'String'>
-    readonly score: FieldRef<"Score", 'String'>
+    readonly score: FieldRef<"Score", 'Int'>
     readonly username: FieldRef<"Score", 'String'>
     readonly mapId: FieldRef<"Score", 'String'>
   }
@@ -5569,20 +5603,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'DateTime'
-   */
-  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-  /**
-   * Reference to a field of type 'DateTime[]'
-   */
-  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -5593,6 +5613,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime'
+   */
+  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime[]'
+   */
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
   /**
    * Deep Input Types
@@ -5734,7 +5768,7 @@ export namespace Prisma {
     OR?: ScoreWhereInput[]
     NOT?: ScoreWhereInput | ScoreWhereInput[]
     id?: UuidFilter<"Score"> | string
-    score?: StringFilter<"Score"> | string
+    score?: IntFilter<"Score"> | number
     username?: StringFilter<"Score"> | string
     mapId?: UuidFilter<"Score"> | string
     map?: XOR<MapScalarRelationFilter, MapWhereInput>
@@ -5753,7 +5787,7 @@ export namespace Prisma {
     AND?: ScoreWhereInput | ScoreWhereInput[]
     OR?: ScoreWhereInput[]
     NOT?: ScoreWhereInput | ScoreWhereInput[]
-    score?: StringFilter<"Score"> | string
+    score?: IntFilter<"Score"> | number
     username?: StringFilter<"Score"> | string
     mapId?: UuidFilter<"Score"> | string
     map?: XOR<MapScalarRelationFilter, MapWhereInput>
@@ -5765,8 +5799,10 @@ export namespace Prisma {
     username?: SortOrder
     mapId?: SortOrder
     _count?: ScoreCountOrderByAggregateInput
+    _avg?: ScoreAvgOrderByAggregateInput
     _max?: ScoreMaxOrderByAggregateInput
     _min?: ScoreMinOrderByAggregateInput
+    _sum?: ScoreSumOrderByAggregateInput
   }
 
   export type ScoreScalarWhereWithAggregatesInput = {
@@ -5774,7 +5810,7 @@ export namespace Prisma {
     OR?: ScoreScalarWhereWithAggregatesInput[]
     NOT?: ScoreScalarWhereWithAggregatesInput | ScoreScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"Score"> | string
-    score?: StringWithAggregatesFilter<"Score"> | string
+    score?: IntWithAggregatesFilter<"Score"> | number
     username?: StringWithAggregatesFilter<"Score"> | string
     mapId?: UuidWithAggregatesFilter<"Score"> | string
   }
@@ -5968,48 +6004,48 @@ export namespace Prisma {
 
   export type ScoreCreateInput = {
     id?: string
-    score: string
+    score: number
     username: string
     map: MapCreateNestedOneWithoutScoresInput
   }
 
   export type ScoreUncheckedCreateInput = {
     id?: string
-    score: string
+    score: number
     username: string
     mapId: string
   }
 
   export type ScoreUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    score?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
     map?: MapUpdateOneRequiredWithoutScoresNestedInput
   }
 
   export type ScoreUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    score?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
     mapId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ScoreCreateManyInput = {
     id?: string
-    score: string
+    score: number
     username: string
     mapId: string
   }
 
   export type ScoreUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    score?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
   }
 
   export type ScoreUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    score?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
     mapId?: StringFieldUpdateOperationsInput | string
   }
@@ -6259,11 +6295,26 @@ export namespace Prisma {
     imgSrc?: SortOrder
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type ScoreCountOrderByAggregateInput = {
     id?: SortOrder
     score?: SortOrder
     username?: SortOrder
     mapId?: SortOrder
+  }
+
+  export type ScoreAvgOrderByAggregateInput = {
+    score?: SortOrder
   }
 
   export type ScoreMaxOrderByAggregateInput = {
@@ -6278,6 +6329,26 @@ export namespace Prisma {
     score?: SortOrder
     username?: SortOrder
     mapId?: SortOrder
+  }
+
+  export type ScoreSumOrderByAggregateInput = {
+    score?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -6446,6 +6517,14 @@ export namespace Prisma {
     connect?: MapWhereUniqueInput
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type MapUpdateOneRequiredWithoutScoresNestedInput = {
     create?: XOR<MapCreateWithoutScoresInput, MapUncheckedCreateWithoutScoresInput>
     connectOrCreate?: MapCreateOrConnectWithoutScoresInput
@@ -6565,6 +6644,22 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -6670,13 +6765,13 @@ export namespace Prisma {
 
   export type ScoreCreateWithoutMapInput = {
     id?: string
-    score: string
+    score: number
     username: string
   }
 
   export type ScoreUncheckedCreateWithoutMapInput = {
     id?: string
-    score: string
+    score: number
     username: string
   }
 
@@ -6743,7 +6838,7 @@ export namespace Prisma {
     OR?: ScoreScalarWhereInput[]
     NOT?: ScoreScalarWhereInput | ScoreScalarWhereInput[]
     id?: UuidFilter<"Score"> | string
-    score?: StringFilter<"Score"> | string
+    score?: IntFilter<"Score"> | number
     username?: StringFilter<"Score"> | string
     mapId?: UuidFilter<"Score"> | string
   }
@@ -6806,7 +6901,7 @@ export namespace Prisma {
 
   export type ScoreCreateManyMapInput = {
     id?: string
-    score: string
+    score: number
     username: string
   }
 
@@ -6848,19 +6943,19 @@ export namespace Prisma {
 
   export type ScoreUpdateWithoutMapInput = {
     id?: StringFieldUpdateOperationsInput | string
-    score?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
   }
 
   export type ScoreUncheckedUpdateWithoutMapInput = {
     id?: StringFieldUpdateOperationsInput | string
-    score?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
   }
 
   export type ScoreUncheckedUpdateManyWithoutMapInput = {
     id?: StringFieldUpdateOperationsInput | string
-    score?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
   }
 

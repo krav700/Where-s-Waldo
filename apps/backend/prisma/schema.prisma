@@ -11,13 +11,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// model User {
-//   id       String     @id @default(uuid()) @db.Uuid
-//   username String     @unique @db.VarChar(50)
-//   score    DateTime[]
-//   scores   Score[]
-// }
-
 model Character {
   id               String  @id @default(uuid()) @db.Uuid
   name             String
@@ -43,10 +36,8 @@ model Map {
 
 model Score {
   id    String   @id @default(uuid()) @db.Uuid
-  score String
+  score Int
 
-  // userUsername String
-  // user   User   @relation(fields: [userUsername], references: [username], onDelete: Cascade)
   username String
 
   mapId String @db.Uuid
