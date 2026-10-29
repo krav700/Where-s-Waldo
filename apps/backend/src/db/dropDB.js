@@ -6,7 +6,6 @@ async function main() {
     await prisma.character.deleteMany({});
     await prisma.score.deleteMany({});
     await prisma.map.deleteMany({});
-    await prisma.user.deleteMany({});
     console.log("done");
 }
 
