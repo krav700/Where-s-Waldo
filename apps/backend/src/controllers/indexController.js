@@ -1,16 +1,13 @@
 const { body, validationResult, matchedData } = require("express-validator");
 const { prisma } = require("../lib/prisma");
 
-const emptyErr = "must not be empty.";
-const lengthErr = "must be between 3 and 50 characters.";
-
 const validateScoreboardUsername = [
     body("username")
         .trim()
         .notEmpty()
-        .withMessage(`Username ${emptyErr}`)
-        .isLength({ min: 3, max: 50 })
-        .withMessage(`Username ${lengthErr}`),
+        .withMessage(`Username must not be empty.`)
+        .isLength({ min: 1, max: 10 })
+        .withMessage(`Username must be between 1 and 10 characters.`),
 ];
 
 async function getInitialProps(req, res, next) {
@@ -25,7 +22,7 @@ async function getInitialProps(req, res, next) {
             startYCoordinate: true,
             endXCoordinate: true,
             endYCoordinate: true,
-        }
+        },
     });
 
     const map = await prisma.map.findFirst({
@@ -42,16 +39,17 @@ async function getInitialProps(req, res, next) {
         },
         take: 10,
         orderBy: {
-            score: 'asc'
+            score: "asc",
         },
         select: {
             id: true,
             score: true,
             username: true,
-        }
+        },
     });
 
     req.session.score = Date.now();
+    req.session.mapSubmited = true;
 
     return res.json({ characters, map, scores });
 }
@@ -68,8 +66,26 @@ async function getCharacters(req, res, next) {
     return res.json({ characters });
 }
 
+async function getMap(req, res, next) {
+    const maps = await prisma.map.findFirst({
+        where: {
+            id: req.params.mapId,
+        },
+    });
+
+    req.session.score = Date.now();
+    req.session.mapSubmited = true;
+
+    return res.json({ maps });
+}
+
 async function getMaps(req, res, next) {
-    const maps = await prisma.map.findMany({});
+    const maps = await prisma.map.findMany({
+        select: {
+            id: true,
+            title: true,
+        },
+    });
     return res.json({ maps });
 }
 
@@ -86,23 +102,44 @@ async function getMapScores(req, res, next) {
             },
         },
         take: 10,
+        orderBy: {
+            score: "asc",
+        },
+        select: {
+            id: true,
+            score: true,
+            username: true,
+        },
     });
 
     return res.json({ scores });
 }
 
-async function postScore(req, res, next) {
-    await prisma.score.create({
-        data: {
-            username: req.body.username,
-            score: req.session.score,
-            mapId: req.params.mapId,
-        }
-    });
+const postScore = [
+    validateScoreboardUsername,
+    async function (req, res, next) {
+        const { username } = req.body;
 
-    console.log("Score created")
-    return res.json({ message: 'Score created' });
-}
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array(),
+                username,
+            });
+        }
+
+        await prisma.score.create({
+            data: {
+                username: username,
+                score: parseInt(req.session.score),
+                mapId: req.params.mapId,
+            },
+        });
+
+        console.log("Score created");
+        return res.json({ message: "Score created" });
+    },
+];
 
 async function getCheckedCharacters(req, res, next) {
     const reqCharacters = req.body.characters;
@@ -120,7 +157,8 @@ async function getCheckedCharacters(req, res, next) {
     for (let i = 0; i < serverCharacter.length; i++) {
         if (
             serverCharacter[i].endXCoordinate > reqCharacters[i].xCoordinate &&
-            reqCharacters[i].xCoordinate > serverCharacter[i].startXCoordinate &&
+            reqCharacters[i].xCoordinate >
+                serverCharacter[i].startXCoordinate &&
             serverCharacter[i].endYCoordinate > reqCharacters[i].yCoordinate &&
             reqCharacters[i].yCoordinate > serverCharacter[i].startYCoordinate
         ) {
@@ -131,8 +169,11 @@ async function getCheckedCharacters(req, res, next) {
         }
     }
 
-    if (win) {
-        req.session.score = (Date.now() - req.session.score).toString().slice(0, -3);
+    if (win && req.session.mapSubmited) {
+        req.session.score = (Date.now() - req.session.score)
+            .toString()
+            .slice(0, -3);
+        req.session.mapSubmited = false;
     }
 
     return res.json({ characters: reqCharacters, win });
@@ -141,6 +182,7 @@ async function getCheckedCharacters(req, res, next) {
 module.exports = {
     getInitialProps,
     getCharacters,
+    getMap,
     getMaps,
     getScore,
     getMapScores,
