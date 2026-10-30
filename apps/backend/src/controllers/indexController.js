@@ -11,6 +11,16 @@ const validateScoreboardUsername = [
 ];
 
 async function getInitialProps(req, res, next) {
+    console.log({
+
+    sessionID: req.sessionID,
+
+    session: req.session,
+
+    cookie: req.headers.cookie,
+
+});
+
     const characters = await prisma.character.findMany({
         where: {
             map: {
@@ -88,7 +98,15 @@ async function getMap(req, res, next) {
     req.session.score = Date.now();
     req.session.mapSubmited = true;
 
-    return res.json({ map, characters, scores });
+    req.session.save((err) => {
+        if (err) {
+            console.error(err);
+
+            return res.status(500).json({ error: "Session save failed" });
+        }
+
+        return res.json({ characters, map, scores });
+    });
 }
 
 async function getMaps(req, res, next) {
