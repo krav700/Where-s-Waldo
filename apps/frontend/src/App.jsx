@@ -191,20 +191,27 @@ function App() {
         };
     }, [currentCharacter]);
 
-    const mainBackground = ["bg-[#16171d] [background-image:radial-gradient(white_1px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
-                            "bg-[#fef99c] [background-image:radial-gradient(#98e4ff_5px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
-                            "bg-[#a3c3a3] [background-image:radial-gradient(#f7fff2b7_3px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
-                            "bg-[#162759] [background-image:radial-gradient(white_1px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
-                            "bg-black [background-image:radial-gradient(white_1px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]"
+    const mainBackground = [
+        "bg-[#16171d] [background-image:radial-gradient(white_1px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
+        "bg-[#fef99c] [background-image:radial-gradient(#98e4ff_5px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
+        "bg-[#a3c3a3] [background-image:radial-gradient(#f7fff2b7_3px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
+        "bg-[#162759] [background-image:radial-gradient(white_1px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
+        "bg-black [background-image:radial-gradient(white_1px,transparent_0)] [background-size:40px_40px] [background-position:-19px_-19px]",
     ];
 
     return (
         <>
             <main
-                className={`grid px-4 gap-8 lg:grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr] md:grid-rows-[1fr_1fr] lg:grid-rows-1 md:gap-4 lg:gap-4 min-h-screen justify-center items-center ${mainBackground[maps.findIndex((map) => (map.title === currentMap.title))]}`}
+                className={`grid px-4 gap-8 lg:grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr] md:grid-rows-[1fr_1fr] lg:grid-rows-1 md:gap-4 lg:gap-4 min-h-screen justify-center items-center ${mainBackground[maps.findIndex((map) => map.title === currentMap.title)]}`}
                 ref={mainRef}
             >
-                <div className={!isMobile() ? `grid grid-rows-${characters?.length} gap-4 md:p-4 lg:p-4 max-h-screen` : `flex gap-4 md:p-4 lg:p-4 max-h-screen`}>
+                <div
+                    className={
+                        !isMobile()
+                            ? `grid grid-rows-${characters?.length} gap-4 md:p-4 lg:p-4 max-h-screen`
+                            : `flex gap-4 md:p-4 lg:p-4 max-h-screen`
+                    }
+                >
                     {characters?.map((char) => (
                         <CharacterImage
                             key={char?.name}
@@ -226,16 +233,21 @@ function App() {
                     <select
                         name="mapSelection"
                         id="mapSelection"
-                        className={`px-5 py-1 font-bold ${localStorage.getItem(`${currentMap.title}`) === "completed" && "text-green-500 text-shadow-xs" }`}
+                        className={`px-5 py-1 font-bold ${localStorage.getItem(`${currentMap.title}`) === "completed" && "text-green-500 text-shadow-xs"}`}
                         defaultValue={maps[0]?.title}
                         onChange={(e) => {
                             changeMap(e.target.value);
                         }}
                     >
                         {maps?.map((map) => (
-                            <option key={map.id} value={map.id} className="rounded-2xl border-2 border-red-400 my-1">
+                            <option
+                                key={map.id}
+                                value={map.id}
+                                className="rounded-2xl border-2 border-red-400 my-1"
+                            >
                                 {map.title} &nbsp;
-                                {localStorage.getItem(`${map.title}`) === "completed" && 'Complete' }
+                                {localStorage.getItem(`${map.title}`) ===
+                                    "completed" && "Complete"}
                             </option>
                         ))}
                     </select>
@@ -258,7 +270,10 @@ function App() {
                         className="px-2 py-1 font-bold bg-[repeating-linear-gradient(45deg,var(--color-red-400),var(--color-red-400)_10px,white_10px,white_20px)]
                                    disabled:bg-[repeating-linear-gradient(45deg,var(--color-gray-400),var(--color-gray-400)_10px,white_10px,white_20px)]
                                    disabled:cursor-not-allowed"
-                        disabled={localStorage.getItem(`${currentMap.title}`) === 'completed'}
+                        disabled={
+                            localStorage.getItem(`${currentMap.title}`) ===
+                            "completed"
+                        }
                     >
                         Submit Guess
                     </button>

@@ -4,7 +4,7 @@ async function fetchApi(path, methodType, bodyParams) {
     try {
         const response = await fetch(`${API_URL}${path}`, {
             method: methodType,
-            credentials: 'include',
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -12,11 +12,9 @@ async function fetchApi(path, methodType, bodyParams) {
         });
 
         const data = await response.json();
-        if (!response.ok && response.status !== 400 || data.error) {
-            console.log(data)
-            throw new Error(
-                data.error || `Request failed: ${response.status}`,
-            );
+        if ((!response.ok && response.status !== 400) || data.error) {
+            console.log(data);
+            throw new Error(data.error || `Request failed: ${response.status}`);
         }
 
         return data;

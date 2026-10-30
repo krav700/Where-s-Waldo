@@ -158,7 +158,15 @@ link {
 
 button {
     color: white;
-    text-shadow: 1px 0 #000, -1px 0 #000, 0 1px #000, 0 -1px #000, 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
+    text-shadow:
+        1px 0 #000,
+        -1px 0 #000,
+        0 1px #000,
+        0 -1px #000,
+        1px 1px #000,
+        -1px -1px #000,
+        1px -1px #000,
+        -1px 1px #000;
 }
 
 button:not(:disabled) {
@@ -202,8 +210,8 @@ p {
 
 select,
 ::picker(select) {
-  appearance: base-select;
-  color: black;
+    appearance: base-select;
+    color: black;
 }
 ::picker(select) {
     background: transparent;
@@ -211,10 +219,24 @@ select,
 }
 
 select {
-    background: repeating-linear-gradient(45deg, white, white 10px,rgb(255, 86, 86) 10px,rgb(255, 86, 86) 20px);
+    background: repeating-linear-gradient(
+        45deg,
+        white,
+        white 10px,
+        rgb(255, 86, 86) 10px,
+        rgb(255, 86, 86) 20px
+    );
     border: 1px solid rgb(255, 86, 86);
     color: white;
-    text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000, 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
+    text-shadow:
+        2px 0 #000,
+        -2px 0 #000,
+        0 2px #000,
+        0 -2px #000,
+        1px 1px #000,
+        -1px -1px #000,
+        1px -1px #000,
+        -1px 1px #000;
 }
 
 select::picker-icon {
@@ -228,7 +250,9 @@ option {
     background: #fff;
     color: red;
     padding: 10px;
-    transition: background 0.4s, color 0.4s;
+    transition:
+        background 0.4s,
+        color 0.4s;
     text-shadow: none;
 }
 

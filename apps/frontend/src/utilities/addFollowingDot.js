@@ -1,5 +1,4 @@
 export default function addFollowingDot(e, parent, currentCharacter) {
-
     if (currentCharacter?.color == undefined) {
         return;
     }

@@ -14,7 +14,11 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
         try {
             submitButton.current.disabled = true;
 
-            const response = await fetchApi(`/api/maps/${currentMap.id}/score`, "POST", { username });
+            const response = await fetchApi(
+                `/api/maps/${currentMap.id}/score`,
+                "POST",
+                { username },
+            );
 
             if (!response) {
                 console.log("No response recieved: ", response);
@@ -27,7 +31,10 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
                 return;
             }
 
-            const scoreResponse = await fetchApi(`/api/maps/${currentMap.id}/scores`, "GET");
+            const scoreResponse = await fetchApi(
+                `/api/maps/${currentMap.id}/scores`,
+                "GET",
+            );
 
             if (!scoreResponse) {
                 console.log("No response recieved: ", response);
@@ -55,7 +62,6 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
                     return;
                 }
 
-
                 localStorage.setItem(`${currentMap.title}`, "completed");
                 setScore(response.score);
             } catch (err) {
@@ -78,38 +84,46 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
                     ))}
                 </div>
             ) : null}
-                <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-col justify-center items-center"
-                >
-                    <fieldset className="flex flex-col gap-2 justify-center items-center w-fit border-red-500 rounded-xl">
-                        <legend className="font-bold text-2xl">You won!</legend>
-                        <div className="flex flex-col gap-4 p-2">
-                            <div>
-                                <h3>Your completed this map in:</h3>
-                                <h2>{getClockTime(score)}</h2>
-                            </div>
-                            <div className="flex flex-col gap-1 py-2">
-                                <label htmlFor="username" className="text-xl font-semibold">Username:</label>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    name="username"
-                                    className="bg-white border border-black text-black"
-                                    onChange={(e) => {
-                                        setUsername(e.target.value);
-                                    }}
-                                />
-                            </div>
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col justify-center items-center"
+            >
+                <fieldset className="flex flex-col gap-2 justify-center items-center w-fit border-red-500 rounded-xl">
+                    <legend className="font-bold text-2xl">You won!</legend>
+                    <div className="flex flex-col gap-4 p-2">
+                        <div>
+                            <h3>Your completed this map in:</h3>
+                            <h2>{getClockTime(score)}</h2>
                         </div>
-                        <button className="w-full p-1 rounded-lg bg-blue-900 text-xl
+                        <div className="flex flex-col gap-1 py-2">
+                            <label
+                                htmlFor="username"
+                                className="text-xl font-semibold"
+                            >
+                                Username:
+                            </label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                className="bg-white border border-black text-black"
+                                onChange={(e) => {
+                                    setUsername(e.target.value);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <button
+                        className="w-full p-1 rounded-lg bg-blue-900 text-xl
                         bg-[repeating-linear-gradient(45deg,var(--color-red-400),var(--color-red-400)_10px,white_10px,white_20px)]
                                    disabled:bg-[repeating-linear-gradient(45deg,var(--color-gray-400),var(--color-gray-400)_10px,white_10px,white_20px)]
-                                   disabled:cursor-not-allowed text-white font-semibold border border-red-500" ref={submitButton}>
-                            Submit
-                        </button>
-                    </fieldset>
-                </form>
+                                   disabled:cursor-not-allowed text-white font-semibold border border-red-500"
+                        ref={submitButton}
+                    >
+                        Submit
+                    </button>
+                </fieldset>
+            </form>
         </div>
     );
 }
