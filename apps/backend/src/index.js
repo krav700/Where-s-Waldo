@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(assetsPath));
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://where-s-waldo-687hsun5d-krav700s-projects.vercel.app"],
     credentials: true,
 }));
 

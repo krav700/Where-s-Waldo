@@ -18,7 +18,7 @@ A photo tagging app, inspired by "Where's Waldo"
 - HTTP - requests/api
 - Vercel - Deployment
 
-### [Click here](https://blog-api-frontend-eta.vercel.app/blogs) to try and find them all!
+### [Click here](https://where-s-waldo-687hsun5d-krav700s-projects.vercel.app) to try and find them all!
 
 ### Preview of the interfaces
 
