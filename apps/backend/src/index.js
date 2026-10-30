@@ -7,6 +7,8 @@ const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { prisma } = require("./lib/prisma.js");
 const indexRouter = require("./routes/indexRouter.js");
 
+app.set("trust proxy", 1);
+
 const cors = require("cors");
 
 const assetsPath = path.join(__dirname, "public");
@@ -15,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(assetsPath));
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173"],
     credentials: true,
 }));
 
@@ -33,7 +35,7 @@ app.use(
             maxAge: 30 * 24 * 60 * 60 * 1000,
             httpOnly: true,
             secure: false,
-            sameSite: 'lax'
+            sameSite: 'none'
          }, // 30 days
     }),
 );
