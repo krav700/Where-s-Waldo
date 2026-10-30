@@ -55,6 +55,8 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
                     return;
                 }
 
+
+                localStorage.setItem(`${currentMap.title}`, "completed");
                 setScore(response.score);
             } catch (err) {
                 return err;
@@ -103,7 +105,7 @@ function ScoreForm({ currentMap, setShowScoreForm, setScores }) {
                         <button className="w-full p-1 rounded-lg bg-blue-900 text-xl
                         bg-[repeating-linear-gradient(45deg,var(--color-red-400),var(--color-red-400)_10px,white_10px,white_20px)]
                                    disabled:bg-[repeating-linear-gradient(45deg,var(--color-gray-400),var(--color-gray-400)_10px,white_10px,white_20px)]
-                                   disabled:cursor-not-allowed text-black font-semibold border border-red-500" ref={submitButton}>
+                                   disabled:cursor-not-allowed text-white font-semibold border border-red-500" ref={submitButton}>
                             Submit
                         </button>
                     </fieldset>
