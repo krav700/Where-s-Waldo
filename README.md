@@ -24,4 +24,4 @@ A photo tagging app, inspired by "Where's Waldo"
 
 ![Screenshot](./public/Screenshot.png)
 
-##### None of the characters/maps are made bz be trademarks are held by creator Martin Handford, original publishers like Walker Books and Candlewick Press, and DreamWorks Distribution Limited (part of NBCUniversal)
+##### None of the characters/maps are made by me, trademarks are held by creator Martin Handford, original publishers like Walker Books and Candlewick Press, and DreamWorks Distribution Limited (part of NBCUniversal)

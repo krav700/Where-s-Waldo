@@ -3,7 +3,7 @@ import isMobile from "../../utilities/isMobile";
 function CharacterImage({ characters, character, onClick }) {
     return (
         <div
-            className={`md:p-2 lg:rounded-sm ${character?.isActive ? "outline-green-400 outline-5" : ""}`}
+            className={`md:p-2 lg:rounded-sm min-h-0 ${character?.isActive ? "outline-green-400 outline-5" : ""}`}
         >
             <div
                 onClick={() => onClick()}
