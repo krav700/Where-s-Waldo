@@ -34,7 +34,7 @@ async function getInitialProps(req, res, next) {
     const scores = await prisma.score.findMany({
         where: {
             map: {
-                id: req.params.mapId,
+                title: "Winter",
             },
         },
         take: 10,
@@ -67,16 +67,28 @@ async function getCharacters(req, res, next) {
 }
 
 async function getMap(req, res, next) {
-    const maps = await prisma.map.findFirst({
+    const map = await prisma.map.findFirst({
         where: {
             id: req.params.mapId,
+        },
+    });
+
+    const characters = await prisma.character.findMany({
+        where: {
+            mapId: req.params.mapId,
+        },
+    });
+
+    const scores = await prisma.score.findMany({
+        where: {
+            mapId: req.params.mapId,
         },
     });
 
     req.session.score = Date.now();
     req.session.mapSubmited = true;
 
-    return res.json({ maps });
+    return res.json({ map, characters, scores });
 }
 
 async function getMaps(req, res, next) {
