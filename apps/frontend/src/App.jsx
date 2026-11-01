@@ -208,9 +208,10 @@ function App() {
                 <div
                     className={
                         !isMobile()
-                            ? `grid grid-rows-${characters?.length} gap-4 md:p-4 lg:p-4 max-h-screen`
+                            ? `grid gap-4 md:p-4 lg:p-4 max-h-screen`
                             : `flex gap-4 md:p-4 lg:p-4 max-h-screen`
                     }
+                    style={{gridTemplateRows: !isMobile() && `repeat(${characters?.length}, minmax(0, 1fr))`}}
                 >
                     {characters?.map((char) => (
                         <CharacterImage
@@ -256,6 +257,7 @@ function App() {
                         ref={currentMapRef}
                         src={currentMap?.imgSrc ?? skySlopeMap}
                         alt={currentMap?.title ?? "Map Image"}
+                        className="w-full"
                     />
 
                     <button
@@ -269,7 +271,7 @@ function App() {
                         }}
                         className="px-2 py-1 font-bold bg-[repeating-linear-gradient(45deg,var(--color-red-400),var(--color-red-400)_10px,white_10px,white_20px)]
                                    disabled:bg-[repeating-linear-gradient(45deg,var(--color-gray-400),var(--color-gray-400)_10px,white_10px,white_20px)]
-                                   disabled:cursor-not-allowed"
+                                   disabled:cursor-not-allowed w-[30%]"
                         disabled={
                             localStorage.getItem(`${currentMap.title}`) ===
                             "completed"

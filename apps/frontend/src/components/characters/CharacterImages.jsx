@@ -7,7 +7,7 @@ function CharacterImage({ characters, character, onClick }) {
         >
             <div
                 onClick={() => onClick()}
-                className="min-w-0 min-h-0 h-full p-4 rounded-sm cursor-pointer border-2 bg-white max-w-64 max-h-56 relative"
+                className="min-w-0 min-h-0 h-full w-full p-4 rounded-sm cursor-pointer border-2 bg-white relative"
             >
                 <div
                     className={
